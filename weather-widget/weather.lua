@@ -50,7 +50,8 @@ local tooltip = awful.tooltip {
 local weather_popup = awful.popup {
     ontop = true,
     visible = false,
-    shape = gears.shape.rounded_rect,
+    --shape = gears.shape.rounded_rect,
+    shape = gears.shape.rect,
     border_width = 1,
     border_color = beautiful.bg_focus,
     maximum_width = 400,
@@ -562,6 +563,19 @@ local function worker(user_args)
                 weather_popup:move_next_to(mouse.current_widget_geometry)
             end
         end)))
+
+    weather_widget:connect_signal("mouse::enter", function()
+        weather_widget:set_bg(beautiful.bg_focus)
+        weather_popup:move_next_to(mouse.current_widget_geometry)
+    end)
+
+    weather_widget:connect_signal("mouse::leave", function()
+        if weather_popup.visible then
+            weather_widget:set_bg('#00000000')
+            weather_popup.visible = not weather_popup.visible
+        end
+    end)
+
 
     watch(
         string.format(GET_FORECAST_CMD, owm_one_cal_api),
